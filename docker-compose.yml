@@ -1,0 +1,32 @@
+services:
+
+  jupyter:
+    build:
+      context: ./jupyter
+    container_name: ml-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./models:/home/app/models   # volumen compartido de modelos
+      - ./notebooks:/home/app/notebooks  # tus notebooks persistentes
+    environment:
+      - JUPYTER_TOKEN=dev123
+    networks:
+      - ml-network
+
+  api:
+    build:
+      context: ./api
+    container_name: ml-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/home/app/models   # mismo volumen compartido
+    networks:
+      - ml-network
+    depends_on:
+      - jupyter
+
+networks:
+  ml-network:
+    driver: bridge
